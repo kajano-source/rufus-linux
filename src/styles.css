@@ -1,0 +1,805 @@
+/* ============================================
+   Rufus Linux Replica - Windows-Like Styling
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Ubuntu', 'Cantarell', 'Noto Sans', sans-serif;
+  font-size: 12px;
+  color: #1a1a1a;
+  background: #f0f0f0;
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ---- Custom Title Bar ---- */
+#titlebar {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  background: #ffffff;
+  border-bottom: 1px solid #d1d1d1;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+
+#titlebar-icon {
+  width: 28px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+}
+
+#titlebar-text {
+  font-size: 12px;
+  color: #333;
+  margin-left: 4px;
+  flex: 1;
+}
+
+#titlebar-controls {
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-btn {
+  width: 46px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  color: #333;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.titlebar-btn:hover {
+  background: #e5e5e5;
+}
+
+.titlebar-close:hover {
+  background: #e81123;
+  color: #fff;
+}
+
+/* ---- Main Content ---- */
+#main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 14px 0 14px;
+}
+
+/* ---- Sections ---- */
+.section {
+  margin-bottom: 4px;
+}
+
+.section-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-line {
+  flex: 1;
+  height: 2px;
+  background: #1a1a1a;
+  display: inline-block;
+}
+
+/* ---- Field Rows ---- */
+.field-row {
+  margin-bottom: 4px;
+}
+
+.field-label {
+  display: block;
+  font-size: 12px;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.field-input-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- Select / Dropdowns ---- */
+.field-select {
+  flex: 1;
+  height: 24px;
+  border: 1px solid #ababab;
+  border-radius: 0;
+  background: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  color: #1a1a1a;
+  padding: 0 6px;
+  outline: none;
+  cursor: pointer;
+  appearance: auto;
+}
+
+.field-select:focus {
+  border-color: #0078d4;
+}
+
+.device-select {
+  font-size: 12px;
+}
+
+.boot-select {
+  min-width: 0;
+}
+
+/* ---- Text Input ---- */
+.field-text {
+  flex: 1;
+  height: 24px;
+  border: 1px solid #ababab;
+  border-radius: 0;
+  background: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  color: #1a1a1a;
+  padding: 0 6px;
+  outline: none;
+}
+
+.field-text:focus {
+  border-color: #0078d4;
+}
+
+/* ---- Icon Buttons ---- */
+.icon-btn {
+  width: 28px;
+  height: 24px;
+  border: 1px solid #ababab;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.icon-btn:hover {
+  background: #e8e8e8;
+  border-color: #888;
+}
+
+/* ---- Action Button (SELECT / DOWNLOAD) ---- */
+.action-btn {
+  height: 24px;
+  padding: 0 14px;
+  border: 1px solid #ababab;
+  background: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.action-btn:hover {
+  background: #e8e8e8;
+  border-color: #888;
+}
+
+/* ---- Dropdown Arrow Button ---- */
+.dropdown-arrow-btn {
+  width: 20px;
+  height: 24px;
+  border: 1px solid #ababab;
+  background: #fff;
+  font-size: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.dropdown-arrow-btn:hover {
+  background: #e8e8e8;
+}
+
+/* ---- Dropdown Menu ---- */
+.dropdown-menu {
+  position: absolute;
+  right: 14px;
+  background: #fff;
+  border: 1px solid #ababab;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+.dropdown-item {
+  padding: 5px 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #0078d4;
+  color: #fff;
+}
+
+/* ---- ISO Check Icon ---- */
+.iso-check-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* ---- Two Column Layout ---- */
+.two-col {
+  display: flex;
+  gap: 12px;
+}
+
+.field-col {
+  flex: 1;
+}
+
+.target-system-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.target-system-row .field-select {
+  flex: 1;
+}
+
+.help-btn {
+  width: 20px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #0078d4;
+  cursor: pointer;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* ---- Persistent Partition ---- */
+.persistent-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.persistent-slider {
+  flex: 1;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #0078d4;
+}
+
+.persistent-value {
+  width: 50px;
+  height: 24px;
+  border: 1px solid #ababab;
+  text-align: center;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 0 4px;
+}
+
+.persistent-unit {
+  height: 24px;
+  border: 1px solid #ababab;
+  font-size: 12px;
+  font-family: inherit;
+  background: #fff;
+  padding: 0 2px;
+}
+
+/* ---- Collapsible Sections ---- */
+.collapsible {
+  font-size: 12px;
+  color: #1a1a1a;
+  cursor: pointer;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.collapsible:hover {
+  color: #0078d4;
+}
+
+.collapse-arrow {
+  font-size: 8px;
+  display: inline-block;
+  transition: transform 0.15s;
+  width: 12px;
+  text-align: center;
+}
+
+.collapse-arrow.open {
+  transform: rotate(90deg);
+}
+
+.collapsible-panel {
+  padding: 2px 0 2px 16px;
+}
+
+/* ---- Checkboxes ---- */
+.checkbox-row {
+  padding: 2px 0;
+  font-size: 12px;
+}
+
+.checkbox-row label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.blue-checkbox {
+  accent-color: #0078d4;
+}
+
+.inline-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.small-select {
+  height: 22px;
+  border: 1px solid #ababab;
+  background: #fff;
+  font-size: 11px;
+  font-family: inherit;
+  padding: 0 4px;
+  margin-left: 4px;
+}
+
+/* ---- Progress Bar ---- */
+.progress-container {
+  position: relative;
+  height: 26px;
+  border: 1px solid #bcbcbc;
+  background: #e6e6e6;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(180deg, #5cb85c 0%, #4cae4c 40%, #449d44 100%);
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progress-bar.active {
+  background: linear-gradient(180deg, #5cb85c 0%, #4cae4c 40%, #449d44 100%);
+}
+
+.progress-bar.error {
+  background: linear-gradient(180deg, #d9534f 0%, #c9302c 40%, #ac2925 100%);
+}
+
+.progress-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #333;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.progress-text.on-green {
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+/* ---- Bottom Bar ---- */
+#bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  flex-shrink: 0;
+}
+
+#bottom-icons {
+  display: flex;
+  gap: 4px;
+}
+
+.bottom-icon-btn {
+  width: 28px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  padding: 0;
+}
+
+.bottom-icon-btn:hover {
+  background: #ddd;
+}
+
+#bottom-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.bottom-btn {
+  min-width: 80px;
+  height: 28px;
+  border: 1px solid #ababab;
+  background: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0 16px;
+}
+
+.bottom-btn:hover {
+  background: #e8e8e8;
+  border-color: #888;
+}
+
+.bottom-btn:active {
+  background: #d0d0d0;
+}
+
+.bottom-btn:disabled {
+  color: #aaa;
+  cursor: default;
+  background: #f0f0f0;
+}
+
+/* ---- Status Bar ---- */
+#status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 22px;
+  padding: 0 8px;
+  background: #f0f0f0;
+  border-top: 1px solid #d1d1d1;
+  font-size: 11px;
+  color: #0078d4;
+  flex-shrink: 0;
+}
+
+#status-right {
+  color: #333;
+}
+
+/* ============================================
+   Dialog Overlay & Windows
+   ============================================ */
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-window {
+  background: #f0f0f0;
+  border: 1px solid #888;
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
+  min-width: 380px;
+  max-width: 460px;
+}
+
+.dialog-titlebar {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  background: #fff;
+  border-bottom: 1px solid #d1d1d1;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #333;
+  gap: 6px;
+}
+
+.dialog-titlebar-icon {
+  display: flex;
+  align-items: center;
+}
+
+.dialog-close-btn {
+  margin-left: auto;
+  width: 30px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-close-btn:hover {
+  background: #e81123;
+  color: #fff;
+}
+
+.dialog-content {
+  padding: 14px 18px;
+}
+
+.dialog-field {
+  margin-bottom: 10px;
+}
+
+.dialog-label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.dialog-select {
+  width: 100%;
+  height: 26px;
+  border: 1px solid #ababab;
+  background: #fff;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 0 6px;
+  color: #1a1a1a;
+}
+
+.dialog-checkbox {
+  margin: 12px 0;
+  font-size: 12px;
+}
+
+.dialog-checkbox label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.dialog-btn {
+  min-width: 90px;
+  height: 28px;
+  border: 1px solid #ababab;
+  background: #e1e1e1;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0 16px;
+}
+
+.dialog-btn:hover {
+  background: #d0d0d0;
+  border-color: #888;
+}
+
+.dialog-btn-default {
+  border: 2px solid #0078d4;
+}
+
+/* ---- Windows UX Dialog ---- */
+.winux-titlebar {
+  background: #d6eaf8;
+  border-bottom: 1px solid #aed6f1;
+}
+
+.winux-content {
+  background: #eaf2f8;
+}
+
+.winux-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.winux-icon {
+  flex-shrink: 0;
+}
+
+.winux-title {
+  font-size: 13px;
+  font-weight: 500;
+  padding-top: 8px;
+}
+
+.winux-options {
+  padding-left: 10px;
+}
+
+.winux-options .checkbox-row {
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.winux-buttons {
+  background: #dce9f4;
+  margin: 14px -18px -14px -18px;
+  padding: 10px 18px;
+  border-top: 1px solid #c0d6e8;
+}
+
+/* ---- Hash Dialog ---- */
+.hash-content {
+  min-width: 340px;
+}
+
+.hash-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.hash-label {
+  width: 55px;
+  font-size: 12px;
+  padding-top: 4px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.hash-value {
+  flex: 1;
+  border: 1px solid #ababab;
+  background: #fff;
+  font-size: 11px;
+  font-family: 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+  padding: 4px 6px;
+  color: #333;
+  resize: none;
+}
+
+input.hash-value {
+  height: 24px;
+}
+
+.hash-multiline {
+  height: 44px;
+  line-height: 1.4;
+}
+
+/* ---- Confirm Dialog ---- */
+.confirm-body {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.confirm-icon {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.confirm-text {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.confirm-text p {
+  margin-bottom: 6px;
+}
+
+/* ---- About Dialog ---- */
+.about-content h3 {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.about-content p {
+  font-size: 12px;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.about-content hr {
+  margin: 10px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+/* ---- Log Dialog ---- */
+.dialog-log-window {
+  width: 440px;
+}
+
+.log-textarea {
+  width: 100%;
+  height: 200px;
+  border: 1px solid #ababab;
+  background: #fff;
+  font-size: 11px;
+  font-family: 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+  padding: 4px 6px;
+  resize: none;
+  color: #333;
+}
+
+/* ---- Scrollbar Styling ---- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* ---- Tooltip ---- */
+[title] {
+  position: relative;
+}

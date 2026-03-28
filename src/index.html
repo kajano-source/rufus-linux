@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rufus 3.20.1929</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Custom Title Bar -->
+  <div id="titlebar">
+    <div id="titlebar-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="1" width="12" height="14" rx="1" fill="#e8913a" stroke="#c07020" stroke-width="0.5"/>
+        <rect x="4" y="3" width="8" height="2" rx="0.5" fill="#fff"/>
+        <rect x="4" y="7" width="8" height="2" rx="0.5" fill="#fff"/>
+        <rect x="4" y="11" width="5" height="2" rx="0.5" fill="#fff"/>
+      </svg>
+    </div>
+    <span id="titlebar-text">Rufus 3.20.1929</span>
+    <div id="titlebar-controls">
+      <button class="titlebar-btn" id="btn-minimize" title="Minimize">&#x2014;</button>
+      <button class="titlebar-btn" id="btn-maximize" title="Maximize">&#x25A1;</button>
+      <button class="titlebar-btn titlebar-close" id="btn-close" title="Close">&#x2715;</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main-content">
+
+    <!-- Drive Properties Section -->
+    <div class="section">
+      <h2 class="section-title">Drive Properties <span class="section-line"></span></h2>
+
+      <div class="field-row">
+        <label class="field-label">Device</label>
+        <div class="field-input-row">
+          <select id="device-select" class="field-select device-select">
+            <option value="">No USB drive detected</option>
+          </select>
+          <button id="btn-save-device" class="icon-btn" title="Save to VHD">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="1" width="14" height="14" rx="1" fill="#6b9cd1" stroke="#4a7ab5" stroke-width="0.5"/>
+              <rect x="4" y="1" width="8" height="5" fill="#fff" stroke="#4a7ab5" stroke-width="0.3"/>
+              <rect x="3" y="9" width="10" height="5" rx="0.5" fill="#ddeeff"/>
+              <rect x="9" y="2" width="2" height="3" fill="#6b9cd1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <label class="field-label">Boot selection</label>
+        <div class="field-input-row">
+          <select id="boot-select" class="field-select boot-select">
+            <option value="disk-iso">Disk or ISO image (Please select)</option>
+            <option value="non-bootable">Non bootable</option>
+            <option value="freedos">FreeDOS</option>
+          </select>
+          <span id="iso-check" class="iso-check-icon" style="display:none;" title="ISO loaded">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <circle cx="10" cy="10" r="9" fill="none" stroke="#0078d4" stroke-width="1.5"/>
+              <path d="M6 10l3 3 5-6" stroke="#0078d4" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <button id="btn-select-iso" class="action-btn">SELECT</button>
+          <button id="btn-boot-dropdown" class="dropdown-arrow-btn" title="Toggle SELECT/DOWNLOAD">&#x25BC;</button>
+        </div>
+      </div>
+
+      <!-- Boot dropdown menu -->
+      <div id="boot-dropdown-menu" class="dropdown-menu" style="display:none;">
+        <div class="dropdown-item" data-action="select">Select...</div>
+        <div class="dropdown-item" data-action="download">Download...</div>
+      </div>
+
+      <div id="image-option-row" class="field-row">
+        <label class="field-label">Image option</label>
+        <div class="field-input-row">
+          <select id="image-option-select" class="field-select">
+            <option value="standard">Standard Windows installation</option>
+            <option value="windows-to-go">Windows To Go</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="persistent-partition-row" class="field-row" style="display:none;">
+        <label class="field-label">Persistent partition size</label>
+        <div class="field-input-row persistent-row">
+          <input type="range" id="persistent-slider" class="persistent-slider" min="0" max="100" value="0">
+          <input type="number" id="persistent-value" class="persistent-value" value="0" min="0">
+          <select id="persistent-unit" class="persistent-unit">
+            <option value="MB">MB</option>
+            <option value="GB" selected>GB</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="partition-target-row" class="field-row two-col">
+        <div class="field-col">
+          <label class="field-label">Partition scheme</label>
+          <select id="partition-scheme" class="field-select">
+            <option value="MBR">MBR</option>
+            <option value="GPT" selected>GPT</option>
+          </select>
+        </div>
+        <div class="field-col">
+          <label class="field-label">Target system</label>
+          <div class="target-system-row">
+            <select id="target-system" class="field-select">
+              <option value="BIOS or UEFI">BIOS or UEFI</option>
+              <option value="UEFI (non CSM)" selected>UEFI (non CSM)</option>
+              <option value="BIOS (UEFI-CSM)">BIOS (UEFI-CSM)</option>
+            </select>
+            <button class="help-btn" title="Help">?</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Drive Properties -->
+      <div class="collapsible" id="adv-drive-toggle">
+        <span class="collapse-arrow">&#x25B6;</span> Show advanced drive properties
+      </div>
+      <div id="adv-drive-panel" class="collapsible-panel" style="display:none;">
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="chk-list-usb-hdd" checked> List USB Hard Drives</label>
+        </div>
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="chk-old-bios"> Add fixes for old BIOSes (extra partition, align, etc.)</label>
+        </div>
+        <div class="checkbox-row">
+          <label class="inline-row">
+            <input type="checkbox" id="chk-rufus-mbr"> Use Rufus MBR with BIOS ID
+            <select id="bios-id-select" class="small-select" disabled>
+              <option>0x80 (Default)</option>
+              <option>0x81</option>
+              <option>0x82</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Format Options Section -->
+    <div class="section">
+      <h2 class="section-title">Format Options <span class="section-line"></span></h2>
+
+      <div class="field-row">
+        <label class="field-label"><strong>Volume label</strong></label>
+        <div class="field-input-row">
+          <input type="text" id="volume-label" class="field-text" value="" placeholder="NEW_VOLUME">
+        </div>
+      </div>
+
+      <div class="field-row two-col">
+        <div class="field-col">
+          <label class="field-label">File system</label>
+          <select id="file-system" class="field-select">
+            <option value="FAT32" selected>FAT32 (Default)</option>
+            <option value="Large FAT32">Large FAT32</option>
+            <option value="NTFS">NTFS</option>
+            <option value="exFAT">exFAT</option>
+            <option value="ext4">ext4</option>
+            <option value="ext2">ext2</option>
+          </select>
+        </div>
+        <div class="field-col">
+          <label class="field-label">Cluster size</label>
+          <select id="cluster-size" class="field-select">
+            <option value="4096" selected>4096 bytes (Default)</option>
+            <option value="8192">8192 bytes</option>
+            <option value="16384">16384 bytes</option>
+            <option value="32768">32768 bytes</option>
+            <option value="65536">65536 bytes</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Advanced Format Options -->
+      <div class="collapsible" id="adv-format-toggle">
+        <span class="collapse-arrow">&#x25B6;</span> Show advanced format options
+      </div>
+      <div id="adv-format-panel" class="collapsible-panel" style="display:none;">
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="chk-quick-format" checked> Quick format</label>
+        </div>
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="chk-ext-label" checked> Create extended label and icon files</label>
+        </div>
+        <div class="checkbox-row">
+          <label class="inline-row">
+            <input type="checkbox" id="chk-badblocks"> Check device for bad blocks
+            <select id="badblock-passes" class="small-select" disabled>
+              <option>1 pass</option>
+              <option>2 passes</option>
+              <option>3 passes</option>
+              <option>4 passes</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Section -->
+    <div class="section">
+      <h2 class="section-title">Status <span class="section-line"></span></h2>
+      <div id="progress-container" class="progress-container">
+        <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+        <span id="progress-text" class="progress-text">READY</span>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div id="bottom-bar">
+      <div id="bottom-icons">
+        <button class="bottom-icon-btn" id="btn-update" title="Check for updates">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="7" stroke="#666" stroke-width="1.2" fill="none"/>
+            <path d="M5 9 C5 6, 9 4, 13 6" stroke="#666" stroke-width="1.2" fill="none"/>
+            <path d="M11 4 L13 6 L11 8" stroke="#666" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="bottom-icon-btn" id="btn-about" title="About Rufus">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="7" stroke="#666" stroke-width="1.2" fill="none"/>
+            <text x="9" y="13" text-anchor="middle" font-size="11" font-family="serif" font-style="italic" fill="#666">i</text>
+          </svg>
+        </button>
+        <button class="bottom-icon-btn" id="btn-settings" title="Application settings">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <line x1="3" y1="5" x2="15" y2="5" stroke="#666" stroke-width="1.2"/>
+            <line x1="3" y1="9" x2="15" y2="9" stroke="#666" stroke-width="1.2"/>
+            <line x1="3" y1="13" x2="15" y2="13" stroke="#666" stroke-width="1.2"/>
+            <circle cx="6" cy="5" r="1.5" fill="#fff" stroke="#666" stroke-width="1"/>
+            <circle cx="11" cy="9" r="1.5" fill="#fff" stroke="#666" stroke-width="1"/>
+            <circle cx="8" cy="13" r="1.5" fill="#fff" stroke="#666" stroke-width="1"/>
+          </svg>
+        </button>
+        <button class="bottom-icon-btn" id="btn-log" title="Show the log">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="3" y="2" width="12" height="14" rx="1" stroke="#666" stroke-width="1.2" fill="none"/>
+            <line x1="5" y1="5" x2="13" y2="5" stroke="#666" stroke-width="0.8"/>
+            <line x1="5" y1="7.5" x2="13" y2="7.5" stroke="#666" stroke-width="0.8"/>
+            <line x1="5" y1="10" x2="13" y2="10" stroke="#666" stroke-width="0.8"/>
+            <line x1="5" y1="12.5" x2="10" y2="12.5" stroke="#666" stroke-width="0.8"/>
+          </svg>
+        </button>
+      </div>
+      <div id="bottom-buttons">
+        <button id="btn-start" class="bottom-btn">START</button>
+        <button id="btn-close" class="bottom-btn">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div id="status-bar">
+    <span id="status-left">0 device found</span>
+    <span id="status-right">00:00:00</span>
+  </div>
+
+  <!-- ========== DIALOGS ========== -->
+
+  <!-- Download ISO Dialog -->
+  <div id="dialog-overlay" class="dialog-overlay" style="display:none;">
+    <!-- Download ISO -->
+    <div id="dialog-download" class="dialog-window" style="display:none;">
+      <div class="dialog-titlebar">
+        <div class="dialog-titlebar-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="1" width="12" height="14" rx="1" fill="#e8913a" stroke="#c07020" stroke-width="0.5"/>
+            <rect x="4" y="3" width="8" height="2" rx="0.5" fill="#fff"/>
+          </svg>
+        </div>
+        <span>Download ISO Image</span>
+        <button class="dialog-close-btn" data-close="download">&#x2715;</button>
+      </div>
+      <div class="dialog-content">
+        <div class="dialog-field">
+          <label class="dialog-label"><strong>Version</strong></label>
+          <select id="dl-version" class="dialog-select">
+            <option>Windows 11</option>
+            <option>Windows 10</option>
+            <option>Ubuntu</option>
+            <option>Debian</option>
+            <option>Fedora</option>
+          </select>
+        </div>
+        <div class="dialog-field">
+          <label class="dialog-label"><strong>Release</strong></label>
+          <select id="dl-release" class="dialog-select">
+            <option>22H2 v1 (Build 22621.525 - 2022.10)</option>
+            <option>22H2 v2 (Build 22621.1702 - 2023.05)</option>
+            <option>23H2 v1 (Build 22631.2428 - 2023.10)</option>
+          </select>
+        </div>
+        <div class="dialog-field">
+          <label class="dialog-label"><strong>Edition</strong></label>
+          <select id="dl-edition" class="dialog-select">
+            <option>Windows 11 Home/Pro/Edu</option>
+            <option>Windows 11 Home</option>
+            <option>Windows 11 Pro</option>
+          </select>
+        </div>
+        <div class="dialog-field">
+          <label class="dialog-label"><strong>Language</strong></label>
+          <select id="dl-language" class="dialog-select">
+            <option>English International</option>
+            <option>English</option>
+            <option>French</option>
+            <option>German</option>
+            <option>Spanish</option>
+            <option>Portuguese</option>
+            <option>Chinese (Simplified)</option>
+            <option>Japanese</option>
+            <option>Korean</option>
+          </select>
+        </div>
+        <div class="dialog-field">
+          <label class="dialog-label"><strong>Architecture</strong></label>
+          <select id="dl-arch" class="dialog-select">
+            <option>x64</option>
+            <option>x86</option>
+            <option>ARM64</option>
+          </select>
+        </div>
+        <div class="dialog-checkbox">
+          <label><input type="checkbox" id="dl-use-browser"> Download using a browser</label>
+        </div>
+        <div class="dialog-buttons">
+          <button id="btn-dl-download" class="dialog-btn">Download</button>
+          <button id="btn-dl-back" class="dialog-btn">Back</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Windows User Experience Dialog -->
+    <div id="dialog-winux" class="dialog-window" style="display:none;">
+      <div class="dialog-titlebar winux-titlebar">
+        <span>Windows User Experience</span>
+      </div>
+      <div class="dialog-content winux-content">
+        <div class="winux-header">
+          <div class="winux-icon">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="18" fill="#4da6ff" stroke="#2980d9" stroke-width="1.5"/>
+              <text x="20" y="28" text-anchor="middle" font-size="26" font-weight="bold" fill="#fff">?</text>
+            </svg>
+          </div>
+          <div class="winux-title">Customize Windows installation?</div>
+        </div>
+        <div class="winux-options">
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="chk-remove-tpm" checked class="blue-checkbox"> Remove requirement for 4GB+ RAM, Secure Boot and TPM 2.0</label>
+          </div>
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="chk-remove-ms-account" checked class="blue-checkbox"> Remove requirement for an online Microsoft account</label>
+          </div>
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="chk-disable-data" checked class="blue-checkbox"> Disable data collection (Skip privacy questions)</label>
+          </div>
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="chk-local-account"> Set a local account using the same name as this user's</label>
+          </div>
+          <div class="checkbox-row">
+            <label><input type="checkbox" id="chk-regional"> Set regional options using the same values as this user's</label>
+          </div>
+        </div>
+        <div class="dialog-buttons winux-buttons">
+          <button id="btn-winux-ok" class="dialog-btn dialog-btn-default">OK</button>
+          <button id="btn-winux-cancel" class="dialog-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hash Dialog -->
+    <div id="dialog-hash" class="dialog-window" style="display:none;">
+      <div class="dialog-titlebar">
+        <span id="hash-dialog-title">file.iso</span>
+        <button class="dialog-close-btn" data-close="hash">&#x2715;</button>
+      </div>
+      <div class="dialog-content hash-content">
+        <div class="hash-row">
+          <label class="hash-label"><strong>MD5:</strong></label>
+          <input type="text" id="hash-md5" class="hash-value" readonly value="Computing...">
+        </div>
+        <div class="hash-row">
+          <label class="hash-label"><strong>SHA1:</strong></label>
+          <input type="text" id="hash-sha1" class="hash-value" readonly value="Computing...">
+        </div>
+        <div class="hash-row">
+          <label class="hash-label"><strong>SHA256:</strong></label>
+          <textarea id="hash-sha256" class="hash-value hash-multiline" readonly>Computing...</textarea>
+        </div>
+        <div class="hash-row">
+          <label class="hash-label"><strong>SHA512:</strong></label>
+          <textarea id="hash-sha512" class="hash-value hash-multiline" readonly>Use &lt;Alt&gt;-&lt;H&gt; (in the main application window) to enable.</textarea>
+        </div>
+        <div class="dialog-buttons">
+          <button id="btn-hash-ok" class="dialog-btn">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Dialog -->
+    <div id="dialog-confirm" class="dialog-window" style="display:none;">
+      <div class="dialog-titlebar">
+        <span>Rufus</span>
+      </div>
+      <div class="dialog-content">
+        <div class="confirm-body">
+          <div class="confirm-icon">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <polygon points="20,4 38,36 2,36" fill="#ffc107" stroke="#e6a800" stroke-width="1.5"/>
+              <text x="20" y="30" text-anchor="middle" font-size="22" font-weight="bold" fill="#333">!</text>
+            </svg>
+          </div>
+          <div class="confirm-text">
+            <p><strong>WARNING: ALL DATA ON DEVICE WILL BE DESTROYED.</strong></p>
+            <p id="confirm-detail">Are you sure you want to continue?</p>
+          </div>
+        </div>
+        <div class="dialog-buttons">
+          <button id="btn-confirm-ok" class="dialog-btn dialog-btn-default">OK</button>
+          <button id="btn-confirm-cancel" class="dialog-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Dialog -->
+    <div id="dialog-about" class="dialog-window" style="display:none;">
+      <div class="dialog-titlebar">
+        <span>About Rufus</span>
+        <button class="dialog-close-btn" data-close="about">&#x2715;</button>
+      </div>
+      <div class="dialog-content about-content">
+        <h3>Rufus Linux Replica v3.20.1929</h3>
+        <p>A Linux-native replica of the Rufus USB formatting utility.</p>
+        <p>Original Rufus by Pete Batard / Akeo Consulting</p>
+        <hr>
+        <p style="font-size:11px; color:#888;">This is an open-source replica for Linux systems.<br>
+        Uses: dd, parted, mkfs, lsblk<br>
+        Runtime: Electron</p>
+        <div class="dialog-buttons">
+          <button class="dialog-btn" data-close="about">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Dialog -->
+    <div id="dialog-log" class="dialog-window dialog-log-window" style="display:none;">
+      <div class="dialog-titlebar">
+        <span>Log</span>
+        <button class="dialog-close-btn" data-close="log">&#x2715;</button>
+      </div>
+      <div class="dialog-content">
+        <textarea id="log-textarea" class="log-textarea" readonly></textarea>
+        <div class="dialog-buttons">
+          <button id="btn-log-clear" class="dialog-btn">Clear</button>
+          <button id="btn-log-save" class="dialog-btn">Save</button>
+          <button class="dialog-btn" data-close="log">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

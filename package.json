@@ -1,0 +1,36 @@
+{
+  "name": "rufus-linux",
+  "version": "3.20.1929",
+  "description": "Rufus USB Flasher - Linux Replica",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "dist": "electron-builder --linux AppImage",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": "Rufus Linux",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.rufus-linux.app",
+    "productName": "Rufus",
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Utility",
+      "icon": "build/icons"
+    },
+    "appImage": {
+      "synopsis": "Rufus USB Flasher for Linux"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "backend/**/*"
+    ]
+  }
+}
