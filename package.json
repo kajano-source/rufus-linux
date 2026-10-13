@@ -1,6 +1,6 @@
 {
   "name": "rufus-linux",
-  "version": "3.20.1929",
+  "version": "3.21.0",
   "description": "Rufus USB Flasher - Linux Replica",
   "main": "main.js",
   "scripts": {

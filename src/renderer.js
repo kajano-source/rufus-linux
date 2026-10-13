@@ -744,7 +744,7 @@ function formatBytes(bytes) {
 // ============================================
 // Initialize
 // ============================================
-log('Rufus 3.20.1929 (Linux Replica)');
+log('Rufus 3.21.0 (Linux Replica)');
 log('Application started');
 
 // Report missing helper programs up front, so the log explains an operation

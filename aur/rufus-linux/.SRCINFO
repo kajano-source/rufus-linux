@@ -1,7 +1,7 @@
 pkgbase = rufus-linux
 	pkgdesc = A Linux-native replica of the Rufus USB flashing utility
-	pkgver = 3.20.1929
-	pkgrel = 2
+	pkgver = 3.21.0
+	pkgrel = 1
 	url = https://github.com/kajano-source/rufus-linux
 	arch = x86_64
 	license = GPL3
@@ -17,7 +17,7 @@ pkgbase = rufus-linux
 	depends = polkit
 	depends = wimlib
 	depends = hivex
-	source = rufus-linux-3.20.1929.tar.gz::https://github.com/kajano-source/rufus-linux/archive/refs/tags/v3.20.1929.tar.gz
+	source = rufus-linux-3.21.0.tar.gz::https://github.com/kajano-source/rufus-linux/archive/refs/tags/v3.21.0.tar.gz
 	sha256sums = SKIP
 
 pkgname = rufus-linux

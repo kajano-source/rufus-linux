@@ -1,8 +1,8 @@
 # Maintainer: Your Name <your@email.com>
 
 pkgname=rufus-linux
-pkgver=3.20.1929
-pkgrel=2
+pkgver=3.21.0
+pkgrel=1
 pkgdesc="A Linux-native replica of the Rufus USB flashing utility"
 arch=('x86_64')
 url="https://github.com/kajano-source/rufus-linux"

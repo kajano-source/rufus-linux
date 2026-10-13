@@ -1,7 +1,7 @@
 pkgbase = rufus-linux-bin
 	pkgdesc = A Linux-native replica of the Rufus USB flashing utility (prebuilt AppImage)
-	pkgver = 3.20.1929
-	pkgrel = 2
+	pkgver = 3.21.0
+	pkgrel = 1
 	url = https://github.com/kajano-source/rufus-linux
 	arch = x86_64
 	license = GPL3
@@ -17,9 +17,9 @@ pkgbase = rufus-linux-bin
 	depends = fuse2
 	provides = rufus-linux
 	conflicts = rufus-linux
-	source = Rufus-3.20.1929.AppImage::https://github.com/kajano-source/rufus-linux/releases/download/v3.20.1929/Rufus-3.20.1929.AppImage
+	source = Rufus-3.21.0.AppImage::https://github.com/kajano-source/rufus-linux/releases/download/v3.21.0/Rufus-3.21.0.AppImage
 	source = rufus.png::https://github.com/kajano-source/rufus-linux/raw/main/src/icons/rufus.png
-	sha256sums = dcc82c2692813d816ddb9ca9b927b4d2399551b6baec1531338191aa310d614a
+	sha256sums = 19850886f248bee5c2a520b3c42fc6db45a813d9363a24cb46dac7c13aba21bb
 	sha256sums = SKIP
 
 pkgname = rufus-linux-bin
