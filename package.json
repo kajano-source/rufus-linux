@@ -7,6 +7,7 @@
     "start": "electron .",
     "dev": "electron .",
     "dist": "electron-builder --linux AppImage",
+    "test": "node --test test/",
     "postinstall": "electron-builder install-app-deps"
   },
   "author": "Rufus Linux",
@@ -19,7 +20,9 @@
     "appId": "com.rufus-linux.app",
     "productName": "Rufus",
     "linux": {
-      "target": ["AppImage"],
+      "target": [
+        "AppImage"
+      ],
       "category": "Utility",
       "icon": "build/icons"
     },
@@ -32,5 +35,8 @@
       "src/**/*",
       "backend/**/*"
     ]
+  },
+  "allowScripts": {
+    "electron@33.4.11": true
   }
 }

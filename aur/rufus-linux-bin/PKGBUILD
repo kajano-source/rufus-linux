@@ -2,19 +2,21 @@
 
 pkgname=rufus-linux-bin
 pkgver=3.20.1929
-pkgrel=1
+pkgrel=2
 pkgdesc="A Linux-native replica of the Rufus USB flashing utility (prebuilt AppImage)"
 arch=('x86_64')
 url="https://github.com/kajano-source/rufus-linux"
 license=('GPL3')
 depends=(
-    'util-linux'
+    'util-linux'     # lsblk, umount, mount, wipefs, partprobe, blockdev
     'parted'
     'dosfstools'
     'ntfs-3g'
     'exfatprogs'
     'e2fsprogs'
     'polkit'
+    'wimlib'         # wimlib-imagex: Windows To Go image extraction/apply
+    'hivex'          # hivexsh: boot configuration (BCD) generation
     'fuse2'          # required for AppImage runtime
 )
 provides=('rufus-linux')

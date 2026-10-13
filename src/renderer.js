@@ -11,6 +11,8 @@ let elapsedTimer = null;
 let elapsedSeconds = 0;
 let logEntries = [];
 let bootMode = 'select'; // 'select' or 'download'
+let wtgPlan = null;       // last successful Windows To Go inspection
+let wtgChecking = false;  // inspection in flight
 
 // DOM Elements
 const deviceSelect = document.getElementById('device-select');
@@ -55,6 +57,7 @@ const dialogHash = document.getElementById('dialog-hash');
 const dialogConfirm = document.getElementById('dialog-confirm');
 const dialogAbout = document.getElementById('dialog-about');
 const dialogLog = document.getElementById('dialog-log');
+const dialogWtg = document.getElementById('dialog-wtg');
 
 // ============================================
 // Logging
@@ -116,6 +119,8 @@ function updateDeviceSelect() {
 deviceSelect.addEventListener('change', () => {
   selectedDrive = currentDrives.find(d => d.path === deviceSelect.value) || null;
   log(`Device selected: ${selectedDrive ? selectedDrive.displayName : 'none'}`);
+  // The Windows To Go plan is validated against the target size.
+  if (wtgPlan) checkWindowsToGo();
 });
 
 // ============================================
@@ -161,7 +166,7 @@ function updateUIForBootSelection(val) {
     log('Boot selection: FreeDOS');
   } else {
     // Disk or ISO image
-    imageOptionRow.style.display = '';
+    imageOptionRow.style.display = selectedIso ? '' : 'none';
     partitionTargetRow.style.display = 'flex';
     btnSelectIso.style.display = '';
     btnBootDropdown.style.display = '';
@@ -216,6 +221,8 @@ btnSelectIso.addEventListener('click', async () => {
   if (!result) return;
 
   selectedIso = result;
+  wtgPlan = null;
+  setWtgStatus('', '');
   log(`ISO selected: ${result.name} (${formatBytes(result.size)})`);
 
   // Update boot selection text
@@ -240,6 +247,9 @@ btnSelectIso.addEventListener('click', async () => {
         <option value="standard">Standard Windows installation</option>
         <option value="windows-to-go">Windows To Go</option>
       `;
+      imageOptionSelect.value = 'standard';
+      wtgPlan = null;
+      setWtgStatus('', '');
       persistentPartitionRow.style.display = 'none';
       partitionScheme.value = 'GPT';
       targetSystem.value = 'UEFI (non CSM)';
@@ -312,6 +322,73 @@ chkBadblocks.addEventListener('change', () => {
 });
 
 // ============================================
+// Windows To Go
+// ============================================
+imageOptionSelect.addEventListener('change', () => {
+  wtgPlan = null;
+  if (imageOptionSelect.value === 'windows-to-go') {
+    log('Image option: Windows To Go');
+    checkWindowsToGo();
+  } else {
+    setWtgStatus('', '');
+    log('Image option: Standard Windows installation');
+  }
+});
+
+/**
+ * Read the Windows image and report what would be installed. This is what makes
+ * the To Go option meaningful instead of silently falling back to a plain dd.
+ */
+async function checkWindowsToGo() {
+  if (!selectedIso) return null;
+  const device = deviceSelect.value;
+  if (!device) {
+    log('Windows To Go: select a USB drive first');
+    return null;
+  }
+
+  wtgChecking = true;
+  setWtgStatus('Checking the Windows image...', 'checking');
+  log('Windows To Go: inspecting the Windows image (administrator access is required)');
+
+  const result = await window.rufus.inspectWindowsToGo({ isoPath: selectedIso.path, devicePath: device });
+
+  wtgChecking = false;
+  if (result.success) {
+    wtgPlan = result;
+    const summary = `${result.image.name} (image ${result.image.index}, ${formatBytes(result.image.size)})`;
+    setWtgStatus(summary, 'ready');
+    log(`Windows To Go ready: ${summary}`);
+  } else {
+    wtgPlan = null;
+    setWtgStatus(result.error, 'error');
+    log(`Windows To Go error: ${result.error}`);
+  }
+  return wtgPlan;
+}
+
+function setWtgStatus(text, state) {
+  const box = document.getElementById('wtg-status');
+  if (!box) return;
+  box.style.display = text ? '' : 'none';
+  box.textContent = text;
+  box.className = `wtg-status ${state || ''}`.trim();
+}
+
+document.getElementById('btn-wtg-ok').addEventListener('click', () => {
+  hideAllDialogs();
+  showConfirmDialog(deviceSelect.value, bootSelect.value);
+});
+
+document.getElementById('btn-wtg-cancel').addEventListener('click', () => {
+  hideAllDialogs();
+});
+
+document.getElementById('btn-wtg-check').addEventListener('click', () => {
+  checkWindowsToGo();
+});
+
+// ============================================
 // START / CLOSE Buttons
 // ============================================
 btnStart.addEventListener('click', async () => {
@@ -327,6 +404,27 @@ btnStart.addEventListener('click', async () => {
 
   if (bootVal === 'disk-iso' && !selectedIso) {
     log('ERROR: No ISO selected');
+    return;
+  }
+
+  // Windows To Go has its own explanation screen: it is not a dd of the ISO.
+  if (bootVal === 'disk-iso' && selectedIso && imageOptionSelect.value === 'windows-to-go') {
+    document.getElementById('wtg-image-name').textContent = selectedIso.name;
+    document.getElementById('wtg-target').textContent = (currentDrives.find(d => d.path === device) || {}).displayName || device;
+
+    if (!wtgPlan && !wtgChecking) {
+      await checkWindowsToGo();
+    }
+
+    const planText = document.getElementById('wtg-plan');
+    if (wtgPlan) {
+      planText.textContent = `${wtgPlan.image.name} - image ${wtgPlan.image.index} - ${formatBytes(wtgPlan.image.size)}`;
+      planText.className = 'wtg-plan ok';
+    } else {
+      planText.textContent = 'This Windows image cannot be used for Windows To Go.';
+      planText.className = 'wtg-plan error';
+    }
+    showDialog('wtg');
     return;
   }
 
@@ -373,10 +471,16 @@ async function startFlashProcess() {
   elapsedSeconds = 0;
   startTimer();
 
+  const isWtg = bootVal === 'disk-iso' && imageOptionSelect.value === 'windows-to-go' && wtgPlan;
+
   const options = {
     isoPath: selectedIso ? selectedIso.path : null,
     devicePath: device,
     bootSelection: bootVal === 'non-bootable' ? 'non-bootable' : 'bootable',
+    // This is the value that used to be dropped on the floor, which is why the
+    // To Go option behaved exactly like a standard install.
+    imageOption: isWtg ? 'windows-to-go' : 'standard',
+    wtgImage: isWtg ? wtgPlan.image : null,
     partitionScheme: partitionScheme.value,
     fileSystem: fileSystem.value,
     volumeLabel: volumeLabel.value,
@@ -384,9 +488,9 @@ async function startFlashProcess() {
     quickFormat: document.getElementById('chk-quick-format').checked
   };
 
-  log(`Starting ${bootVal === 'non-bootable' ? 'format' : 'flash'} on ${device}`);
+  log(`Starting ${isWtg ? 'Windows To Go' : bootVal === 'non-bootable' ? 'format' : 'flash'} on ${device}`);
 
-  setProgress(0, bootVal === 'non-bootable' ? 'Formatting...' : 'Writing...', false);
+  setProgress(0, isWtg ? 'Preparing...' : bootVal === 'non-bootable' ? 'Formatting...' : 'Writing...', false);
 
   const result = await window.rufus.startFlash(options);
 
@@ -437,10 +541,28 @@ document.getElementById('btn-winux-cancel').addEventListener('click', () => {
 // Progress
 // ============================================
 window.rufus.onFlashProgress((progress) => {
+  // Stage messages drive the label; progress events carry the numbers.
+  const stages = {
+    inspecting: 'Reading Windows image...',
+    unmounting: 'Unmounting partitions...',
+    partitioning: 'Creating partition table...',
+    formatting: 'Formatting...',
+    applying: 'Applying Windows image...',
+    'boot-config': 'Creating boot configuration...',
+    finalizing: 'Configuring first boot...',
+    writing: 'Writing ISO image...',
+    syncing: 'Syncing...'
+  };
+
+  if (progress.stage && stages[progress.stage]) {
+    progressText.textContent = stages[progress.stage];
+    progressBar.classList.add('active');
+  }
+
   if (progress.percent !== undefined) {
     const isComplete = progress.stage === 'complete';
     const isError = progress.stage === 'error' || progress.stage === 'cancelled';
-    setProgress(progress.percent, progress.message, isComplete, isError);
+    setProgress(progress.percent, isComplete ? 'READY' : progress.message, isComplete, isError);
   }
 
   if (progress.detail) {
@@ -450,7 +572,10 @@ window.rufus.onFlashProgress((progress) => {
 
 function setProgress(percent, text, isComplete, isError) {
   progressBar.style.width = percent + '%';
-  progressText.textContent = text || '';
+  // Progress-only events carry no message; keep whatever the stage set.
+  if (text !== undefined && text !== null) {
+    progressText.textContent = text;
+  }
 
   progressBar.classList.remove('active', 'error');
   progressText.classList.remove('on-green');
@@ -553,6 +678,7 @@ function showDialog(name) {
   switch (name) {
     case 'download': dialogDownload.style.display = ''; break;
     case 'winux': dialogWinux.style.display = ''; break;
+    case 'wtg': dialogWtg.style.display = ''; break;
     case 'hash': dialogHash.style.display = ''; break;
     case 'confirm': dialogConfirm.style.display = ''; break;
     case 'about': dialogAbout.style.display = ''; break;
@@ -568,6 +694,7 @@ function hideAllDialogs() {
 function hideAllDialogWindows() {
   dialogDownload.style.display = 'none';
   dialogWinux.style.display = 'none';
+  if (dialogWtg) dialogWtg.style.display = 'none';
   dialogHash.style.display = 'none';
   dialogConfirm.style.display = 'none';
   dialogAbout.style.display = 'none';
@@ -619,6 +746,17 @@ function formatBytes(bytes) {
 // ============================================
 log('Rufus 3.20.1929 (Linux Replica)');
 log('Application started');
+
+// Report missing helper programs up front, so the log explains an operation
+// that cannot work instead of failing with a cryptic error.
+window.rufus.checkTools().then(({ missing, windowsToGo }) => {
+  if (missing && missing.length) {
+    log(`WARNING: missing tools: ${missing.join(', ')}`);
+  }
+  if (windowsToGo && windowsToGo.missing && windowsToGo.missing.length) {
+    log(`Windows To Go needs: ${windowsToGo.missing.join(', ')} (pacman -S wimlib hivex)`);
+  }
+});
 
 // Start the timer on launch
 elapsedSeconds = 0;

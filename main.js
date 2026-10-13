@@ -4,10 +4,18 @@ const { listUsbDrives } = require('./backend/usb-detect');
 const { writeIso, cancelWrite } = require('./backend/iso-writer');
 const { formatDrive } = require('./backend/formatter');
 const { calculateHashes } = require('./backend/hash-calc');
+const { checkTools, deviceSizeBytes } = require('./backend/shell');
+const wtg = require('./backend/windows-to-go');
 const fs = require('fs');
 
 let mainWindow;
 let pollInterval;
+
+function send(channel, payload) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send(channel, payload);
+  }
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -35,9 +43,7 @@ function createWindow() {
   pollInterval = setInterval(async () => {
     try {
       const drives = await listUsbDrives();
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('usb-drives-updated', drives);
-      }
+      send('usb-drives-updated', drives);
     } catch (err) {
       console.error('USB poll error:', err);
     }
@@ -47,9 +53,7 @@ function createWindow() {
   setTimeout(async () => {
     try {
       const drives = await listUsbDrives();
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('usb-drives-updated', drives);
-      }
+      send('usb-drives-updated', drives);
     } catch (err) {
       console.error('Initial USB scan error:', err);
     }
@@ -122,25 +126,29 @@ ipcMain.handle('list-devices', async () => {
 
 // Start flashing
 ipcMain.handle('start-flash', async (event, options) => {
-  // options: { isoPath, devicePath, bootSelection, partitionScheme, fileSystem, volumeLabel, clusterSize, quickFormat }
+  // options: { isoPath, devicePath, bootSelection, imageOption, partitionScheme,
+  //            fileSystem, volumeLabel, clusterSize, quickFormat, wtgImage }
+  const progress = (payload) => send('flash-progress', payload);
+
   try {
-    if (options.bootSelection === 'non-bootable') {
-      // Non-bootable format
-      await formatDrive(options, (progress) => {
-        if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('flash-progress', progress);
-        }
-      });
+    if (options.imageOption === 'windows-to-go') {
+      // Real Windows To Go: apply the Enterprise/Education image and build a
+      // boot configuration that boots winload from the USB stick.
+      await wtg.createWindowsToGo({
+        isoPath: options.isoPath,
+        devicePath: options.devicePath,
+        image: options.wtgImage,
+        volumeLabel: 'WINDOWS TO GO',
+        locale: options.wtgLocale
+      }, progress);
+    } else if (options.bootSelection === 'non-bootable') {
+      await formatDrive(options, progress);
     } else {
-      // ISO flash
-      await writeIso(options, (progress) => {
-        if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('flash-progress', progress);
-        }
-      });
+      await writeIso(options, progress);
     }
     return { success: true };
   } catch (err) {
+    console.error('start-flash error:', err);
     return { success: false, error: err.message };
   }
 });
@@ -151,6 +159,29 @@ ipcMain.handle('cancel-flash', async () => {
     cancelWrite();
     return { success: true };
   } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+// Report which helper programs are available, so the UI can explain what to
+// install before an operation fails halfway through.
+ipcMain.handle('check-tools', async () => {
+  const base = checkTools();
+  const windowsToGo = checkTools(wtg.REQUIRED_TOOLS);
+  return {
+    missing: base.missing,
+    windowsToGo: { missing: windowsToGo.missing }
+  };
+});
+
+// Read the Windows image and report what Windows To Go would install.
+ipcMain.handle('inspect-windows-to-go', async (event, { isoPath, devicePath }) => {
+  try {
+    const targetSizeBytes = await deviceSizeBytes(devicePath);
+    const plan = await wtg.inspectWindowsToGo({ isoPath, devicePath, targetSizeBytes });
+    return { success: true, ...plan, targetSizeBytes };
+  } catch (err) {
+    console.error('inspect-windows-to-go error:', err);
     return { success: false, error: err.message };
   }
 });
@@ -175,7 +206,7 @@ ipcMain.handle('get-iso-info', async (event, filePath) => {
     const stats = fs.statSync(filePath);
     const name = path.basename(filePath);
     // Try to determine if it's a Windows or Linux ISO from filename
-    const isWindows = /win|windows/i.test(name);
+    const isWindows = /windows|win(7|8|10|11|server)/i.test(name);
     const isUbuntu = /ubuntu/i.test(name);
     const isDebian = /debian/i.test(name);
     const isFedora = /fedora/i.test(name);

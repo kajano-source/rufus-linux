@@ -82,6 +82,7 @@
             <option value="windows-to-go">Windows To Go</option>
           </select>
         </div>
+        <div id="wtg-status" class="wtg-status" style="display:none;"></div>
       </div>
 
       <div id="persistent-partition-row" class="field-row" style="display:none;">
@@ -369,6 +370,46 @@
         <div class="dialog-buttons winux-buttons">
           <button id="btn-winux-ok" class="dialog-btn dialog-btn-default">OK</button>
           <button id="btn-winux-cancel" class="dialog-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Windows To Go Dialog -->
+    <div id="dialog-wtg" class="dialog-window" style="display:none;">
+      <div class="dialog-titlebar">
+        <span>Windows To Go</span>
+        <button class="dialog-close-btn" data-close="wtg">&#x2715;</button>
+      </div>
+      <div class="dialog-content">
+        <p class="wtg-intro">
+          Windows To Go installs a full copy of Windows onto the USB drive so it
+          runs from that drive on any compatible computer. This is not a copy of
+          the ISO: the USB drive is partitioned, the Windows image is applied and
+          a boot configuration is created.
+        </p>
+        <div class="wtg-row">
+          <span class="wtg-label">Source</span>
+          <span id="wtg-image-name" class="wtg-value">-</span>
+        </div>
+        <div class="wtg-row">
+          <span class="wtg-label">Target</span>
+          <span id="wtg-target" class="wtg-value">-</span>
+        </div>
+        <div class="wtg-row">
+          <span class="wtg-label">Image</span>
+          <span id="wtg-plan" class="wtg-value">-</span>
+        </div>
+        <ul class="wtg-requirements">
+          <li>Only Windows <strong>Enterprise</strong> and <strong>Education</strong> images can run from removable media.</li>
+          <li>The drive will be repartitioned as GPT: a 260 MB EFI partition plus one NTFS partition.</li>
+          <li>The first boot skips the online account screen.</li>
+          <li>Booting it requires a 64-bit UEFI computer; Secure Boot is supported.</li>
+        </ul>
+        <p class="wtg-warning"><strong>All data on the target drive will be destroyed.</strong></p>
+        <div class="dialog-buttons">
+          <button id="btn-wtg-check" class="dialog-btn">Re-check</button>
+          <button id="btn-wtg-ok" class="dialog-btn dialog-btn-default">Continue</button>
+          <button id="btn-wtg-cancel" class="dialog-btn">Cancel</button>
         </div>
       </div>
     </div>

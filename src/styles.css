@@ -764,6 +764,55 @@ input.hash-value {
   border-top: 1px solid #ccc;
 }
 
+/* ---- Windows To Go ---- */
+.wtg-status {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #555;
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: #f0f0f0;
+}
+.wtg-status.ready { color: #1a6b1a; background: #e8f5e9; }
+.wtg-status.checking { color: #555; background: #f0f0f0; }
+.wtg-status.error { color: #aa1111; background: #fdecea; }
+
+.wtg-intro {
+  font-size: 12px;
+  color: #444;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+.wtg-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+.wtg-label {
+  width: 70px;
+  color: #666;
+  flex-shrink: 0;
+}
+.wtg-value {
+  flex: 1;
+  word-break: break-word;
+}
+.wtg-plan.ok { color: #1a6b1a; }
+.wtg-plan.error { color: #aa1111; }
+.wtg-requirements {
+  margin: 10px 0;
+  padding-left: 18px;
+  font-size: 11px;
+  color: #555;
+  line-height: 1.5;
+}
+.wtg-warning {
+  font-size: 12px;
+  color: #aa1111;
+  margin: 8px 0 0 0;
+}
+
 /* ---- Log Dialog ---- */
 .dialog-log-window {
   width: 440px;

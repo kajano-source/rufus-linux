@@ -16,6 +16,10 @@ contextBridge.exposeInMainWorld('rufus', {
   selectIso: () => ipcRenderer.invoke('select-iso'),
   getIsoInfo: (filePath) => ipcRenderer.invoke('get-iso-info', filePath),
 
+  // Environment / capabilities
+  checkTools: () => ipcRenderer.invoke('check-tools'),
+  inspectWindowsToGo: (payload) => ipcRenderer.invoke('inspect-windows-to-go', payload),
+
   // Flash operations
   startFlash: (options) => ipcRenderer.invoke('start-flash', options),
   cancelFlash: () => ipcRenderer.invoke('cancel-flash'),

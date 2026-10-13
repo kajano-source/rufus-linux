@@ -2,20 +2,22 @@
 
 pkgname=rufus-linux
 pkgver=3.20.1929
-pkgrel=1
+pkgrel=2
 pkgdesc="A Linux-native replica of the Rufus USB flashing utility"
 arch=('x86_64')
 url="https://github.com/kajano-source/rufus-linux"
 license=('GPL3')
 depends=(
     'electron33'
-    'util-linux'     # provides lsblk, umount
+    'util-linux'     # lsblk, umount, mount, wipefs, partprobe, blockdev
     'parted'
     'dosfstools'     # mkfs.vfat
     'ntfs-3g'        # mkfs.ntfs
     'exfatprogs'     # mkfs.exfat
     'e2fsprogs'      # mkfs.ext4
     'polkit'         # pkexec
+    'wimlib'         # wimlib-imagex: Windows To Go image extraction/apply
+    'hivex'          # hivexsh: boot configuration (BCD) generation
 )
 makedepends=(
     'npm'
